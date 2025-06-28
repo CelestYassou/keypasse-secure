@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="logo-Keypasse-Secure-cube-blue-none.png" />
+    <title>Keypass Secure - Coffre-fort sécurisé</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<style>
+    :root {
+        --primary: #00c6ff;
+        --secondary: #00ffae;
+        --bg: #181c22;
+        --bg-alt: #232931;
+        --card: #232526;
+        --text: #f5f6fa;
+        --accent: #232526;
+        --danger: #ff4b5c;
+        --radius: 14px;
+        --shadow: 0 4px 32px 0 rgba(0, 0, 0, 0.18);
+    }
+
+    .light-mode {
+        --primary: #0077cc;
+        --secondary: #00cc77;
+        --bg: #f8f9fa;
+        --bg-alt: #e9ecef;
+        --card: #ffffff;
+        --text: #212529;
+        --accent: #f8f9fa;
+        --danger: #dc3545;
+    }
+
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        min-height: 100vh;
+        margin: 0;
+        padding: 2rem;
+        font-family: 'Inter', Arial, sans-serif;
+        background: linear-gradient(135deg, var(--bg) 0%, var(--bg-alt) 100%);
+        color: var(--text);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        border: 2px solid #000000;
+    }
+
+    h1 {
+        font-size: 2.4rem;
+        font-weight: 700;
+        letter-spacing: 1px;
+        background: linear-gradient(90deg, var(--primary), var(--secondary));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 2rem;
+    }
+
+    #login, #vault {
+        background: var(--card);
+        box-shadow: var(--shadow);
+        border-radius: var(--radius);
+        padding: 2rem;
+        min-width: 340px;
+        max-width: 90vw;
+        margin-bottom: 2rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    input[type="password"], input[type="text"], input[type="url"] {
+        background: var(--bg-alt);
+        border: none;
+        border-radius: var(--radius);
+        padding: 0.8rem 1.1rem;
+        font-size: 1rem;
+        color: var(--text);
+        outline: none;
+        transition: box-shadow 0.2s, background 0.2s;
+        box-shadow: 0 1px 6px 0 rgba(0, 0, 0, 0.08);
+    }
+
+    input:focus {
+        box-shadow: 0 0 0 2px var(--primary);
+        background: #262e38;
+    }
+
+    button {
+        background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%);
+        color: var(--accent);
+        border: none;
+        border-radius: var(--radius);
+        padding: 0.7rem 1.2rem;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+        box-shadow: 0 1px 6px 0 rgba(0, 0, 0, 0.08);
+    }
+
+    button:hover {
+        background: linear-gradient(90deg, var(--secondary), var(--primary));
+        color: var(--text);
+    }
+
+    ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        max-height: 300px;
+        overflow-y: auto;
+    }
+
+    li {
+        background: var(--bg-alt);
+        margin: 0.5rem 0;
+        padding: 1rem;
+        border-radius: var(--radius);
+        box-shadow: 0 1px 6px 0 rgba(0, 0, 0, 0.10);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .entry-text {
+        flex-grow: 1;
+        word-break: break-word;
+    }
+
+    .entry-actions {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+
+    #vault > div.form-row {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+
+    #vault > div.form-row > input,
+    #vault > div.form-row > button {
+        flex: 1;
+        min-width: 150px;
+    }
+
+    #urlOpenButtons {
+        margin-top: 1rem;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    .error {
+        color: var(--danger);
+        font-weight: 700;
+    }
+
+    .password-row {
+        display: flex;
+        gap: 0.5rem;
+        flex: 1;
+        min-width: 150px;
+    }
+
+    .password-row input[type="password"], .password-row input[type="text"] {
+        flex-grow: 1;
+        margin: 0;
+    }
+
+    .password-row button {
+        flex-shrink: 0;
+        padding: 0 1rem;
+    }
+
+    footer {
+        margin-top: auto;
+        padding: 1rem 0;
+        font-size: 0.9rem;
+        color: #7d7d7d;
+        text-align: center;
+        width: 100%;
+        max-width: 600px;
+    }
+
+    .security-advice {
+        background: var(--card);
+        border-radius: var(--radius);
+        padding: 1rem;
+        margin-top: 1rem;
+        max-width: 90vw;
+        border-top: 4px solid var(--primary);
+    }
+
+    .security-advice h3 {
+        margin-top: 0;
+        color: var(--primary);
+    }
+
+    #changePasswordBtn {
+        display: none;
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 1000;
+    }
+
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1001;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.7);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .modal.show {
+        opacity: 1;
+    }
+
+    .modal-content {
+        background-color: var(--card);
+        margin: 10% auto;
+        padding: 25px;
+        border-radius: var(--radius);
+        width: 80%;
+        max-width: 500px;
+        box-shadow: var(--shadow);
+        transform: translateY(-20px);
+        transition: transform 0.3s ease;
+    }
+
+    .modal.show .modal-content {
+        transform: translateY(0);
+    }
+
+    .close {
+        color: var(--danger);
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: color 0.3s;
+    }
+
+    .close:hover {
+        color: #ff0000;
+    }
+
+    .modal-content input[type="password"] {
+        width: calc(100% - 24px);
+        padding: 12px;
+        margin: 10px 0;
+        border-radius: var(--radius);
+        border: none;
+        background: var(--bg-alt);
+        box-shadow: 0 1px 6px 0 rgba(0, 0, 0, 0.08);
+        color: var(--text);
+    }
+
+    .modal-content button {
+        width: 100%;
+        padding: 12px;
+        margin-top: 10px;
+    }
+
+    #toggleModeBtn {
+        position: fixed;
+        top: 10px;
+        right: 10px;
+        z-index: 1000;
+    }
+
+    @media (max-width: 600px) {
+        #login, #vault {
+            padding: 1.2rem 0.5rem;
+            min-width: unset;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+        }
+
+        #vault > div.form-row {
+            flex-direction: column;
+        }
+
+        #vault > div.form-row > input,
+        #vault > div.form-row > button {
+            flex: none;
+            width: 100%;
+            min-width: unset;
+        }
+
+        .password-row {
+            flex-direction: column;
+        }
+
+        .password-row button {
+            width: 100%;
+            padding: 0.7rem 0;
+        }
+    }
+</style>
+
+</head>
+<body>
+
+<h1>🔐 Keypass Secure</h1>
+
+<button id="toggleModeBtn">🌙 Mode Sombre</button>
+
+<div id="login">
+    <input type="password" id="masterPassword" placeholder="Mot de passe maître" autocomplete="off" />
+    <input type="password" id="secretKey" placeholder="Clé secrète" autocomplete="off" />
+    <div style="display:flex; gap: 0.5rem; flex-wrap: wrap;">
+        <button id="unlockBtn">Déverrouiller</button>
+        <button id="importBtn">📥 Importer</button>
+        <button id="lockBtn" style="display:none;">🔒 Verrouiller</button>
+    </div>
+    <p id="errorMsg" class="error" style="display:none;"></p>
+    <input type="file" id="fileInput" accept="application/json" style="display:none;" />
+</div>
+
+<div class="security-advice" id="securityAdvice">
+    <h3>Conseil de sécurité</h3>
+    <p>Il est recommandé d'utiliser un mot de passe complexe contenant des majuscules, des minuscules, des chiffres et des caractères spéciaux pour une meilleure sécurité.</p>
+</div>
+
+<div id="vault" style="display:none;">
+    <div class="form-row">
+        <input type="text" id="site" placeholder="Nom du site" autocomplete="off" />
+        <input type="url" id="url" placeholder="URL du site (https://...)" autocomplete="off" />
+    </div>
+    <div class="form-row password-row">
+        <input type="text" id="username" placeholder="Nom d'utilisateur" autocomplete="off" />
+        <input type="password" id="password" placeholder="Mot de passe" autocomplete="off" />
+        <button id="generatePasswordBtn" title="Générer un mot de passe aléatoire">🔄 Générer</button>
+    </div>
+    <div style="display:flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.5rem;">
+        <button id="addEntryBtn">Ajouter</button>
+        <button id="saveVaultBtn">💾 Enregistrer</button>
+        <button id="exportVaultBtn">📤 Exporter</button>
+    </div>
+    <input type="text" id="search" placeholder="Rechercher..." oninput="renderEntries()" style="margin-top:1rem;" autocomplete="off" />
+    <ul id="entries"></ul>
+    <div id="urlOpenButtons"></div>
+</div>
+
+<button id="changePasswordBtn" class="change-password-btn">Changer Mot de Passe</button>
+
+<div id="changePasswordModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Changer Mot de Passe Maître et Clé Secrète</h2>
+        <input type="password" id="newMasterPassword" placeholder="Nouveau mot de passe maître" autocomplete="off" />
+        <input type="password" id="newSecretKey" placeholder="Nouvelle clé secrète" autocomplete="off" />
+        <button id="confirmChangePasswordBtn">Confirmer</button>
+    </div>
+</div>
+
+<footer>© 2025 Keypass Secure - Tous droits réservés à CelestYassou - <a href="https://celestyassou.github.io/keypasse-secure/Keypasse-Secure-Politique-de-Confidentialit%C3%A9-CGU.html">Politique de Confidentialité & CGU</a></footer>
+
+<script>
+    // Variables globales
+    let vaultData = [];
+    let cryptoKey = null;
+    let salt = null;
+    let autoLockTimeout;
+    let failedAttempts = 0;
+    const maxFailedAttempts = 5;
+    const lockoutTime = 30000;
+    const encoder = new TextEncoder();
+    const decoder = new TextDecoder();
+
+    // Elements DOM
+    const masterPasswordInput = document.getElementById('masterPassword');
+    const secretKeyInput = document.getElementById('secretKey');
+    const unlockBtn = document.getElementById('unlockBtn');
+    const importBtn = document.getElementById('importBtn');
+    const lockBtn = document.getElementById('lockBtn');
+    const fileInput = document.getElementById('fileInput');
+    const errorMsg = document.getElementById('errorMsg');
+    const vaultDiv = document.getElementById('vault');
+    const exportVaultBtn = document.getElementById('exportVaultBtn');
+    const securityAdviceDiv = document.getElementById('securityAdvice');
+
+    const siteInput = document.getElementById('site');
+    const urlInput = document.getElementById('url');
+    const usernameInput = document.getElementById('username');
+    const passwordInput = document.getElementById('password');
+    const generatePasswordBtn = document.getElementById('generatePasswordBtn');
+    const addEntryBtn = document.getElementById('addEntryBtn');
+    const saveVaultBtn = document.getElementById('saveVaultBtn');
+    const searchInput = document.getElementById('search');
+    const entriesList = document.getElementById('entries');
+    const urlOpenButtonsDiv = document.getElementById('urlOpenButtons');
+
+    const changePasswordBtn = document.getElementById('changePasswordBtn');
+    const changePasswordModal = document.getElementById('changePasswordModal');
+    const closeModal = document.querySelector('.close');
+    const newMasterPasswordInput = document.getElementById('newMasterPassword');
+    const newSecretKeyInput = document.getElementById('newSecretKey');
+    const confirmChangePasswordBtn = document.getElementById('confirmChangePasswordBtn');
+    const toggleModeBtn = document.getElementById('toggleModeBtn');
+
+    // Fonction pour dériver une clé cryptographique depuis le mot de passe maître et la clé secrète
+    async function deriveKey(password, secret, salt) {
+        const combinedKey = password + secret;
+        const keyMaterial = await window.crypto.subtle.importKey(
+            'raw',
+            encoder.encode(combinedKey),
+            { name: 'PBKDF2' },
+            false,
+            ['deriveKey']
+        );
+        return window.crypto.subtle.deriveKey(
+            {
+                name: 'PBKDF2',
+                salt,
+                iterations: 250000,
+                hash: 'SHA-256',
+            },
+            keyMaterial,
+            { name: 'AES-GCM', length: 256 },
+            false,
+            ['encrypt', 'decrypt']
+        );
+    }
+
+    // Fonction pour chiffrer des données JSON avec AES-GCM
+    async function encryptData(data, key) {
+        const iv = window.crypto.getRandomValues(new Uint8Array(12));
+        const encoded = encoder.encode(JSON.stringify(data));
+        const ciphertext = await window.crypto.subtle.encrypt(
+            { name: 'AES-GCM', iv },
+            key,
+            encoded
+        );
+        return {
+            iv: arrayBufferToBase64(iv.buffer),
+            data: arrayBufferToBase64(ciphertext),
+        };
+    }
+
+    // Fonction pour déchiffrer les données JSON
+    async function decryptData(encrypted, key) {
+        const iv = base64ToArrayBuffer(encrypted.iv);
+        const data = base64ToArrayBuffer(encrypted.data);
+        const decrypted = await window.crypto.subtle.decrypt(
+            { name: 'AES-GCM', iv },
+            key,
+            data
+        );
+        return JSON.parse(decoder.decode(decrypted));
+    }
+
+    // Utils base64
+    function arrayBufferToBase64(buffer) {
+        let binary = '';
+        const bytes = new Uint8Array(buffer);
+        bytes.forEach((b) => (binary += String.fromCharCode(b)));
+        return window.btoa(binary);
+    }
+
+    function base64ToArrayBuffer(base64) {
+        const binary = window.atob(base64);
+        const bytes = new Uint8Array(binary.length);
+        for (let i = 0; i < binary.length; i++) {
+            bytes[i] = binary.charCodeAt(i);
+        }
+        return bytes.buffer;
+    }
+
+    // Affichage des messages d'erreur
+    function showError(message) {
+        errorMsg.style.display = 'block';
+        errorMsg.textContent = message;
+    }
+
+    function clearError() {
+        errorMsg.style.display = 'none';
+        errorMsg.textContent = '';
+    }
+
+    // Générer mot de passe aléatoire
+    function generatePassword(length = 16) {
+        const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()-_=+[]{}|;:,.<>?';
+        let pass = '';
+        const array = new Uint32Array(length);
+        window.crypto.getRandomValues(array);
+        for (let i = 0; i < length; i++) {
+            pass += chars[array[i] % chars.length];
+        }
+        return pass;
+    }
+
+    generatePasswordBtn.addEventListener('click', () => {
+        passwordInput.value = generatePassword();
+    });
+
+    // Déverrouiller le coffre
+    unlockBtn.addEventListener('click', async () => {
+        clearError();
+        const masterPass = masterPasswordInput.value;
+        const secretKey = secretKeyInput.value;
+        if (!masterPass || !secretKey) {
+            showError('Veuillez entrer le mot de passe maître et la clé secrète.');
+            return;
+        }
+
+        if (failedAttempts >= maxFailedAttempts) {
+            showError(`Trop de tentatives échouées. Veuillez réessayer après ${lockoutTime / 1000} secondes.`);
+            setTimeout(() => {
+                failedAttempts = 0;
+            }, lockoutTime);
+            return;
+        }
+
+        try {
+            let storedSalt = localStorage.getItem('kp_salt');
+            if (!storedSalt) {
+                salt = window.crypto.getRandomValues(new Uint8Array(16));
+                localStorage.setItem('kp_salt', arrayBufferToBase64(salt));
+            } else {
+                salt = base64ToArrayBuffer(storedSalt);
+            }
+            cryptoKey = await deriveKey(masterPass, secretKey, salt);
+
+            let storedVault = localStorage.getItem('kp_vault');
+            if (storedVault) {
+                const encryptedVault = JSON.parse(storedVault);
+                vaultData = await decryptData(encryptedVault, cryptoKey);
+            } else {
+                vaultData = [];
+            }
+
+            document.getElementById('login').style.display = 'none';
+            securityAdviceDiv.style.display = 'none';
+            vaultDiv.style.display = 'flex';
+            lockBtn.style.display = 'inline-block';
+            changePasswordBtn.style.display = 'block';
+            masterPasswordInput.value = '';
+            secretKeyInput.value = '';
+            renderEntries();
+            startAutoLockTimer();
+            failedAttempts = 0;
+        } catch (e) {
+            failedAttempts++;
+            showError(`Mot de passe maître ou clé secrète incorrecte. Tentatives restantes : ${maxFailedAttempts - failedAttempts}`);
+            cryptoKey = null;
+            vaultData = [];
+            vaultDiv.style.display = 'none';
+            document.getElementById('login').style.display = 'flex';
+            lockBtn.style.display = 'none';
+        }
+    });
+
+    // Verrouiller le coffre
+    lockBtn.addEventListener('click', () => {
+        clearTimeout(autoLockTimeout);
+        vaultData = [];
+        cryptoKey = null;
+        siteInput.value = '';
+        urlInput.value = '';
+        usernameInput.value = '';
+        passwordInput.value = '';
+        searchInput.value = '';
+        entriesList.innerHTML = '';
+        urlOpenButtonsDiv.innerHTML = '';
+        vaultDiv.style.display = 'none';
+        document.getElementById('login').style.display = 'flex';
+        securityAdviceDiv.style.display = 'block';
+        lockBtn.style.display = 'none';
+        changePasswordBtn.style.display = 'none';
+        clearError();
+    });
+
+    // Ajouter une entrée
+    addEntryBtn.addEventListener('click', () => {
+        clearError();
+        const site = siteInput.value.trim();
+        const url = urlInput.value.trim();
+        const username = usernameInput.value.trim();
+        const password = passwordInput.value.trim();
+
+        if (!site || !username || !password) {
+            showError('Veuillez remplir au minimum Site, Nom d\'utilisateur et Mot de passe.');
+            return;
+        }
+        if (url && !/^https?:\/\/.+/.test(url)) {
+            showError('URL invalide, elle doit commencer par http:// ou https://');
+            return;
+        }
+
+        vaultData.push({ site, url, username, password });
+        renderEntries();
+        siteInput.value = '';
+        urlInput.value = '';
+        usernameInput.value = '';
+        passwordInput.value = '';
+    });
+
+    // Modifier une entrée
+    function editEntry(index) {
+        const entry = vaultData[index];
+        siteInput.value = entry.site;
+        urlInput.value = entry.url || '';
+        usernameInput.value = entry.username;
+        passwordInput.value = entry.password;
+        addEntryBtn.textContent = 'Modifier';
+        addEntryBtn.dataset.editIndex = index;
+    }
+
+    // Confirmer modification ou ajouter nouvelle entrée
+    addEntryBtn.addEventListener('click', () => {
+        if (addEntryBtn.dataset.editIndex !== undefined) {
+            const index = Number(addEntryBtn.dataset.editIndex);
+            vaultData[index] = {
+                site: siteInput.value.trim(),
+                url: urlInput.value.trim(),
+                username: usernameInput.value.trim(),
+                password: passwordInput.value.trim(),
+            };
+            addEntryBtn.textContent = 'Ajouter';
+            delete addEntryBtn.dataset.editIndex;
+            siteInput.value = '';
+            urlInput.value = '';
+            usernameInput.value = '';
+            passwordInput.value = '';
+            renderEntries();
+        }
+    });
+
+    // Supprimer entrée
+    function deleteEntry(index) {
+        if (confirm('Supprimer cette entrée ?')) {
+            vaultData.splice(index, 1);
+            renderEntries();
+        }
+    }
+
+    // Afficher les entrées filtrées
+    function renderEntries() {
+        const filter = searchInput.value.trim().toLowerCase();
+        entriesList.innerHTML = '';
+        urlOpenButtonsDiv.innerHTML = '';
+
+        vaultData.forEach((entry, index) => {
+            if (filter && !(
+                entry.site.toLowerCase().includes(filter) ||
+                entry.username.toLowerCase().includes(filter)
+            )) return;
+
+            const li = document.createElement('li');
+
+            const entryText = document.createElement('div');
+            entryText.className = 'entry-text';
+            entryText.textContent =
+                `Site: ${entry.site}\n` +
+                `Utilisateur: ${entry.username}\n` +
+                `Mot de passe: *********`;
+
+            li.appendChild(entryText);
+
+            const actions = document.createElement('div');
+            actions.className = 'entry-actions';
+
+            const editBtn = document.createElement('button');
+            editBtn.textContent = '✏️';
+            editBtn.title = 'Modifier';
+            editBtn.onclick = () => editEntry(index);
+            actions.appendChild(editBtn);
+
+            const delBtn = document.createElement('button');
+            delBtn.textContent = '🗑️';
+            delBtn.title = 'Supprimer';
+            delBtn.onclick = () => deleteEntry(index);
+            actions.appendChild(delBtn);
+
+            li.appendChild(actions);
+
+            entriesList.appendChild(li);
+
+            if (entry.url && /^https?:\/\/.+/.test(entry.url)) {
+                const urlBtn = document.createElement('button');
+                urlBtn.textContent = `🔗 ${entry.site}`;
+                urlBtn.title = `Ouvrir ${entry.url}`;
+                urlBtn.onclick = () => window.open(entry.url, '_blank');
+                urlOpenButtonsDiv.appendChild(urlBtn);
+            }
+        });
+    }
+
+    // Enregistrer coffre sécurisé
+    saveVaultBtn.addEventListener('click', async () => {
+        clearError();
+        if (!cryptoKey) {
+            showError('Coffre non déverrouillé.');
+            return;
+        }
+        try {
+            const encrypted = await encryptData(vaultData, cryptoKey);
+            localStorage.setItem('kp_vault', JSON.stringify(encrypted));
+            alert('Coffre enregistré localement de manière sécurisée.');
+        } catch (e) {
+            showError('Erreur lors de l\'enregistrement : ' + e.message);
+        }
+    });
+
+    // Exporter coffre sécurisé
+    exportVaultBtn.addEventListener('click', async () => {
+        clearError();
+        if (!cryptoKey) {
+            showError('Coffre non déverrouillé.');
+            return;
+        }
+        try {
+            const encrypted = await encryptData(vaultData, cryptoKey);
+            const dataStr = JSON.stringify(encrypted);
+            const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
+            const exportFileDefaultName = 'keypass-secure-export.json';
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
+        } catch (e) {
+            showError('Erreur lors de l\'exportation : ' + e.message);
+        }
+    });
+
+    // Importer coffre sécurisé
+    importBtn.addEventListener('click', () => {
+        fileInput.value = '';
+        fileInput.click();
+    });
+
+    fileInput.addEventListener('change', async () => {
+        clearError();
+        if (!cryptoKey) {
+            showError('Veuillez d\'abord déverrouiller le coffre avec le mot de passe maître et la clé secrète.');
+            return;
+        }
+        const file = fileInput.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = async (e) => {
+            try {
+                const importedData = JSON.parse(e.target.result);
+                if (!importedData.iv || !importedData.data) throw new Error('Fichier invalide');
+
+                const decrypted = await decryptData(importedData, cryptoKey);
+                if (!Array.isArray(decrypted)) throw new Error('Format de coffre invalide');
+
+                vaultData = decrypted;
+                renderEntries();
+                alert('Coffre importé avec succès.');
+            } catch (err) {
+                showError('Erreur lors de l\'import : ' + err.message);
+            }
+        };
+        reader.readAsText(file);
+    });
+
+    // Verrouillage automatique après inactivité
+    function startAutoLockTimer() {
+        clearTimeout(autoLockTimeout);
+        autoLockTimeout = setTimeout(() => {
+            lockBtn.click();
+            alert('Session verrouillée pour sécurité (inactivité).');
+        }, 5 * 60 * 1000);
+    }
+
+    // Réinitialiser le timer à chaque interaction utilisateur
+    ['click', 'keydown', 'mousemove', 'touchstart'].forEach(evt => {
+        document.addEventListener(evt, () => {
+            if (vaultDiv.style.display === 'flex') {
+                startAutoLockTimer();
+            }
+        });
+    });
+
+    // Gestion du modal pour changer le mot de passe et la clé secrète
+    changePasswordBtn.addEventListener('click', () => {
+        changePasswordModal.style.display = 'block';
+    });
+
+    closeModal.addEventListener('click', () => {
+        changePasswordModal.style.display = 'none';
+    });
+
+    window.addEventListener('click', (event) => {
+        if (event.target === changePasswordModal) {
+            changePasswordModal.style.display = 'none';
+        }
+    });
+
+    confirmChangePasswordBtn.addEventListener('click', async () => {
+        const newMasterPass = newMasterPasswordInput.value;
+        const newSecretKey = newSecretKeyInput.value;
+
+        if (!newMasterPass || !newSecretKey) {
+            alert('Veuillez entrer un nouveau mot de passe maître et une nouvelle clé secrète.');
+            return;
+        }
+
+        try {
+            const newKey = await deriveKey(newMasterPass, newSecretKey, salt);
+            const encrypted = await encryptData(vaultData, newKey);
+            localStorage.setItem('kp_vault', JSON.stringify(encrypted));
+            alert('Mot de passe maître et clé secrète changés avec succès.');
+            changePasswordModal.style.display = 'none';
+            newMasterPasswordInput.value = '';
+            newSecretKeyInput.value = '';
+        } catch (e) {
+            alert('Erreur lors du changement du mot de passe et de la clé secrète : ' + e.message);
+        }
+    });
+
+    // Toggle mode clair/sombre
+    toggleModeBtn.addEventListener('click', () => {
+        document.body.classList.toggle('light-mode');
+        if (document.body.classList.contains('light-mode')) {
+            toggleModeBtn.textContent = '🌙 Mode Sombre';
+        } else {
+            toggleModeBtn.textContent = '🌞 Mode Clair';
+        }
+    });
+</script>
+
+</body>
+</html>
